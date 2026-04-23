@@ -4,6 +4,10 @@ numpy
 langchain
 langchain-core
 langchain-community
+langchain-ollama
+
+# LangSmith for monitoring
+langsmith
 
 # Google gemini(PaLM) Integration
 langchain-google-genai
@@ -13,7 +17,7 @@ google-generativeai
 langchain-huggingface
 transformers
 huggingface-Hub
-tensorflow
+# tensorflow
 sentence-transformers
 
 # Envirnoment Variable Management
@@ -21,6 +25,18 @@ python-dotenv
 
 # Flask
 flask
+# pytorch
 
 # gtts for text to audio
 gtts
+
+# 
+transformers
+pipeline
+
+# Datasets for the text to speach.
+sentencepiece
+soundfile
+
+# vedio_generator
+moviepy

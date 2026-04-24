@@ -27,12 +27,12 @@ except Exception as e:
     print(f"Neural TTS failed: {e}, using gTTS")
     use_neural = False
 
-def text_to_speech(text, filename=None, use_gtts=False):
+def text_to_speech(text, filename=None, use_gtts=True):
     if not text or not text.strip():
         raise ValueError("No text to speak")
     
     if filename is None:
-        filename = "static/audio/output.wav"
+        filename = "static/audio/output.mp3"
     
     folder = os.path.dirname(filename)
     if folder:
@@ -40,9 +40,27 @@ def text_to_speech(text, filename=None, use_gtts=False):
     
     if use_gtts or not use_neural:
         from gtts import gTTS
+        import re
         text = text.strip()
         if not text:
             raise ValueError("No text to speak")
+        
+        def num_to_words(match):
+            num = int(match.group())
+            ones = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
+            teens = ['ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen']
+            tens = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety']
+            
+            if num < 10:
+                return ones[num]
+            elif num < 20:
+                return teens[num - 10]
+            elif num < 100:
+                return tens[num // 10] + ('' if num % 10 == 0 else ' ' + ones[num % 10])
+            return str(num)
+        
+        text = re.sub(r'\b\d+\b', lambda m: num_to_words(m), text)
+        
         filename = filename.replace('.wav', '.mp3')
         tts = gTTS(text=text, lang='en', slow=False)
         tts.save(filename)

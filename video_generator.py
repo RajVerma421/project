@@ -123,15 +123,16 @@ def create_video(text, audio_file, output_path="output/final.mp4", w=720, h=1280
                     framerate = wf.getframerate()
                     if nframes > 0 and framerate > 0:
                         audio_dur = nframes / framerate
+                        audio_dur = audio_dur / 1.15
                         print(f"Audio duration: {audio_dur:.2f}s")
             except:
                 try:
                     audio_clip = AudioFileClip(audio_file)
                     audio_dur = audio_clip.duration
+                    audio_dur = audio_dur / 1.15
                     audio_clip.close()
                     print(f"Audio duration: {audio_dur:.2f}s")
                 except:
-                    audio_dur = 5
                     print("Using default audio duration: 5s")
         except Exception as e:
             print(f"Audio duration error: {e}")
@@ -157,8 +158,8 @@ def create_video(text, audio_file, output_path="output/final.mp4", w=720, h=1280
         if not final_lines:
             final_lines = [text[:30]]
         
-        total_duration = max(audio_dur, 2)
-        line_duration = (total_duration - 0.5) / max(len(final_lines), 1)
+        total_duration = audio_dur if audio_dur > 0 else 2
+        line_duration = total_duration / max(len(final_lines), 1)
         
         lines_data = []
         for i, line in enumerate(final_lines):
@@ -184,6 +185,7 @@ def create_video(text, audio_file, output_path="output/final.mp4", w=720, h=1280
             
             result = subprocess.run(
                 [ffmpeg, '-y', '-i', temp_video, '-i', audio_file, 
+                 '-filter:a', 'atempo=1.15',
                  '-c:v', 'copy', '-c:a', 'aac', '-shortest', output_path],
                 capture_output=True, timeout=120
             )
